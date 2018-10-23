@@ -1,21 +1,32 @@
+//Faculdade: Pitagoras campus Turu
+//Aluno: Leonardo Henrique Martins Ferreira
+//Professor: João Antunes
+//Sistema do banco para a obtenção da nota parcial 2
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdio_ext.h>
 #include <time.h>
 
-int main(){
+//Variaves de Criar conta
+int  conta, saldo_in = 0, senha, operacao ;
+long int cpf, cpf1; //O cpf1 é do arquivo extrato
+char nome[51];
+//variaveis de teste de login e senha
+int i, flag = 0, flag2 = 0;
+char id[15], pass[15], str[50];
+//Variaveis do usuario logado
+int opcao, saldo_novo, saque, deposito, conta_des, valor_trans, voltar, voltar1;
+
+//ponteiro do extrato
+
+//Função principal do sistema
+int main(void){
  __fpurge(stdin);
-  //VAriaves de Criar conta
-  int cpf[15], conta, saldo_in = 0, senha, operacao ;
-  char nome[51];
-  //variaveis de teste de login e senha
-  int i, flag = 0, flag2 = 0;
-  char id[15], pass[15], str[50];
-  //Variaveis do usuario logado
-  int opcao;
 
   system ("clear");
+
   printf("\t ______________________________________\n"  );
   printf("\t|     ****************************     |\n" );
   printf("\t|     ***Escolha uma das opções***     |\n" );
@@ -37,8 +48,8 @@ int main(){
             printf("\nDigite seu nome: ");
             scanf("%s", &nome);
             printf("\nDigite seu numero de CPF: " );
-            scanf("%d", &cpf);
-            printf("\nDigite uma senha: " );
+            scanf("%li", &cpf);
+            printf("\nDigite uma senha(6 Digitos): " );
             scanf("%d", &senha);
             printf("\n________________________________________\n" );
             system ("clear");
@@ -54,17 +65,16 @@ int main(){
     //Mostrando os dados da conta
             printf("\t|=DADOS DA CONTA=|\n" );
             printf("\n|Proprietario: %s", nome );
-            printf("\n|CPF: %d", cpf );
+            printf("\n|CPF: %li", cpf);
             printf("\n|Senha: %d", senha );
             printf("\n|Numero da conta: %d\n", conta);
             printf("________________________________________\n" );
-            getc;
 
             FILE *pont_arq;
             pont_arq = fopen("dados.txt", "a");
             fprintf(pont_arq, "|--------------------------|\n" );
             fprintf(pont_arq, "Proprietario: %s\n", nome);
-            fprintf(pont_arq, "CPF: %i\n", cpf);
+            fprintf(pont_arq, "CPF: %li\n", cpf);
             fprintf(pont_arq, "Conta: %d\n", conta);
             fprintf(pont_arq, "Saldo: %d\n", saldo_in);
             fprintf(pont_arq, "|--------------------------|\n" );
@@ -74,7 +84,8 @@ int main(){
             pont_senha = fopen("passwords.txt", "a");
             fprintf(pont_senha, "%d\n", senha);
             fclose(pont_senha);
-            break;
+
+
     //Usuario ja cadastrado
     case 2:
             do{
@@ -83,6 +94,7 @@ int main(){
               printf("\n|CPF ou conta: " );
               scanf("%s", &id);
               pont_arq = fopen("dados.txt", "r");
+              //Testando dentro do arquivo para saber se tem o cpf cadastrado
               while((fscanf(pont_arq,"%s\n", &str))!= EOF){
                 i++;
                 if( (strcmp(id, str))==0){
@@ -91,13 +103,13 @@ int main(){
                 }
               }
               if(flag == 1)
-                printf("|=CPF ou Conta correto, agora senha...=|\n");
+                printf("|=CPF ou Conta encontrada=|\n");
               else
                 printf("\n|=CPF ou Conta inexistente... Tente novamente|\n");
 
               fclose(pont_arq);
               }while(flag == 0);
-          //Teste de senha
+              //Teste de senha
             do{
               printf("________________________________________\n" );
               printf("***Entre com sua senha***\n" );
@@ -121,27 +133,85 @@ int main(){
             }while(flag2 == 0);
             system("clear");
 
-        //Menu do usuario
-            printf("\t ______________________________________\n"  );
-            printf("\t|     ****************************     |\n" );
-            printf("\t|     ***Escolha uma das opções***     |\n" );
-            printf("\t|     ****************************     |\n" );
-            printf("\t|                                      |\n" );
-            printf("\t|           [1] Saldo                  |\n" );
-            printf("\t|           [2] Saque                  |\n" );
-            printf("\t|           [3] Deposito               |\n" );
-            printf("\t|           [4] Transferencia          |\n" );
-            printf("\t|                                      |\n" );
-            printf("\t|______________________________________|\n" );
-            scanf("%d", &opcao);
+            do{
+              //Menu do Usuario
+                   printf("\t   ||Logado com o CPF: %s||\n", id);
+                   printf("\t   |No dia :%s As:%s|\n",__DATE__,__TIME__);
+                   printf("\t ______________________________________\n"  );
+                   printf("\t|     ****************************     |\n" );
+                   printf("\t|     ***Escolha uma das opções***     |\n" );
+                   printf("\t|     ****************************     |\n" );
+                   printf("\t|                                      |\n" );
+                   printf("\t|           [1] Saldo                  |\n" );
+                   printf("\t|           [2] Saque                  |\n" );
+                   printf("\t|           [3] Deposito               |\n" );
+                   printf("\t|           [4] Transferencia          |\n" );
+                   printf("\t|                                      |\n" );
+                   printf("\t|______________________________________|\n" );
+                   scanf("%d", &opcao);
+              //Saldo
 
-            if (opcao == 1){
-              printf("\t\n ______________________________________\n"  );
-              printf("Seu saldo é: ");
-              printf("\t\n ______________________________________\n"  );
-            }
 
-            break;
+                   if (opcao == 1){
+                     printf("\t\n ______________________________________\n"  );
+                     printf("Seu saldo é: %d", saldo_in);
+                     printf("\t\n ______________________________________\n"  );
+                     }
+              //Saque
+                   if (opcao == 2 && saldo_in == 0){
+                     printf("\t\n ______________________________________\n"  );
+                     printf("Você não tem dinheiro em conta para sacar!! "   );
+                     printf("\t\n ______________________________________\n"  );
+                   }
+                   else if(saldo_in > 0){
+                   printf("\t\n ______________________________________\n"  );
+                   printf("|Digite o valor do saque: ");
+                   scanf("%d", &saque);
+                   saldo_in = saldo_in - saque;
+                   printf("=|Saque efetuado com sucesso|=\n" );
+                   printf("\t\n ______________________________________\n"  );
+                 }
+              //Deposito
+                   if (opcao == 3){
+                     printf("\t\n ______________________________________\n"  );
+                     printf("|Digite o valor do deposito: ");
+                     scanf("%d", &deposito);
+                     saldo_in = deposito;
+                     printf("\t=|Depositado com sucesso|=" );
+                     printf("\t\n ______________________________________\n"  );
+
+            //Gravando no arquivo
+
+                     }
+              //Tranferencia
+                   if (opcao == 4){
+                     printf("\t\n ______________________________________\n"  );
+                     printf("|Digite a conta destino: ");
+                     scanf("%d", &conta_des);
+                     printf("|Valor da transferência:: ");
+                     scanf("%d", &valor_trans);
+                     printf("\n\t=|Tranferido com sucesso|=\n" );
+                     printf("\t\n ______________________________________\n"  );
+                   }
+
+                   FILE *pont_extrato;
+                   pont_extrato = fopen("extratos.txt", "a");
+                   fprintf(pont_extrato, "|--------------------------------------|\n" );
+                   fprintf(pont_extrato, "|No dia :%s As:%s|\n", __DATE__,__TIME__);
+                   fprintf(pont_extrato, "|O CPF: %s Teve seu saldo alterado\n", id);
+                   fprintf(pont_extrato, "|Novo saldo: %d\n", saldo_in);
+                   fprintf(pont_extrato, "|--------------------------------------|\n" );
+                   fclose(pont_extrato);
+
+              //Voltando ao menu principal
+                   printf("\n=|Digite qualquer numero para voltar ao menu inicial ou '0' para sair|=\n" );
+                   scanf("%d", &voltar1);
+                   voltar = voltar1;
+
+                   system ("clear");
+              //Salvando o novo extrato bancario
+
+            }while (voltar > 0);
 
     return 0;
 }
