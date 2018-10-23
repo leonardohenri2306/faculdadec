@@ -23,7 +23,8 @@ int opcao, saldo_novo, saque, deposito, conta_des, valor_trans, voltar, voltar1;
 //Função principal do sistema
 int main(void){
 
-  system ("clear");
+  system("clear");
+
   printf("        Developer: Leonardo Henrique Martins Ferreira\n");
   printf("\t ______________________________________\n"  );
   printf("\t|     ****************************     |\n" );
@@ -37,10 +38,11 @@ int main(void){
 
 
   scanf("%d", &operacao);
-  system ("clear");
+
 
   switch (operacao){
     case 1:
+        system("clear");
    //Criando a conta e recebendo informações
             printf("___________________________________________\n" );
             printf("\nEntre com os dados abaixo\n");
@@ -51,7 +53,7 @@ int main(void){
             printf("\n|Digite uma senha(6 Digitos): " );
             scanf("%d", &senha);
             printf("\n____________________________________________\n" );
-            system ("clear");
+
             printf("\n\t|=Conta criada com sucesso=|\n" );
             printf("\n____________________________________________\n" );
 
@@ -85,9 +87,12 @@ int main(void){
             fprintf(pont_senha, "%d\n", senha);
             fclose(pont_senha);
 
+            system("clear");
+
 
     //Usuario ja cadastrado
     case 2:
+    system("clear");
     //Todas as contas quando são logadas tem seu saldo alterado para 0 para melhor
     //entendimento no programa, porem nos arquivos permanentes tem todos os dados salvos.
             do{
@@ -133,9 +138,11 @@ int main(void){
               printf("________________________________________\n" );
               fclose(pont_senha);
             }while(flag2 == 0);
+
             system("clear");
 
             do{
+
               /*Teria varias maneiras de fazer isso, mas eu fiz assim para evitar
               alguns bugs e ficar melhor o entendimento*/
 
@@ -162,6 +169,7 @@ int main(void){
                      printf("Seu saldo é: %d", saldo_in);
                      printf("\t\n ______________________________________\n"  );
                      }
+
               //Saque
                    if (opcao == 2 && saldo_in == 0){
                      printf("\t\n ______________________________________\n"  );
@@ -251,24 +259,21 @@ int main(void){
                     }
 
                    }
-                   if (opcao = 5){
-                     system ("clear");
+
+                   if (opcao == 5){
+                     system("clear");
                      break;
                    }
 
-              //Voltando ao menu principal
                    printf("\n=|Deseja fazer outra operação?(Digite qualquer numero) ou '0' para sair|=\n" );
                    scanf("%d", &voltar1);
                    voltar = voltar1;
+                   system("clear");
 
-                   system ("clear");
-              //Salvando o novo extrato bancario
+          }while (voltar > 0);
 
-            }while (voltar > 0);
-          case 3:
-            system ("clear");
-            break;
 
-    return 0;
+
 }
+    return 0;
 }
