@@ -6,12 +6,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdio_ext.h>
 #include <time.h>
 
 //Variaves de Criar conta
 int  conta, saldo_in = 0, senha, operacao ;
-long int cpf, cpf1; //O cpf1 é do arquivo extrato
+long int cpf, cpf1, cpf_des; //O cpf1 é do arquivo extrato
 char nome[51];
 //variaveis de teste de login e senha
 int i, flag = 0, flag2 = 0;
@@ -23,10 +22,9 @@ int opcao, saldo_novo, saque, deposito, conta_des, valor_trans, voltar, voltar1;
 
 //Função principal do sistema
 int main(void){
- __fpurge(stdin);
 
   system ("clear");
-
+  printf("        Developer: Leonardo Henrique Martins Ferreira\n");
   printf("\t ______________________________________\n"  );
   printf("\t|     ****************************     |\n" );
   printf("\t|     ***Escolha uma das opções***     |\n" );
@@ -34,8 +32,9 @@ int main(void){
   printf("\t|                                      |\n" );
   printf("\t|           [1] Criar Conta            |\n" );
   printf("\t|           [2] Entrar                 |\n" );
-  printf("\t|                                      |\n" );
+  printf("\t|           [3] Sair                   |\n" );
   printf("\t|______________________________________|\n" );
+
 
   scanf("%d", &operacao);
   system ("clear");
@@ -43,18 +42,18 @@ int main(void){
   switch (operacao){
     case 1:
    //Criando a conta e recebendo informações
-            printf("________________________________________\n" );
+            printf("___________________________________________\n" );
             printf("\nEntre com os dados abaixo\n");
-            printf("\nDigite seu nome: ");
+            printf("\n|Digite seu nome(Por favor separe com '-'): ");
             scanf("%s", &nome);
-            printf("\nDigite seu numero de CPF: " );
+            printf("\n|Digite seu numero de CPF: " );
             scanf("%li", &cpf);
-            printf("\nDigite uma senha(6 Digitos): " );
+            printf("\n|Digite uma senha(6 Digitos): " );
             scanf("%d", &senha);
-            printf("\n________________________________________\n" );
+            printf("\n____________________________________________\n" );
             system ("clear");
             printf("\n\t|=Conta criada com sucesso=|\n" );
-            printf("\n________________________________________\n" );
+            printf("\n____________________________________________\n" );
 
     // inicializar o gerador de números aleatórios
             srand(100);
@@ -67,17 +66,18 @@ int main(void){
             printf("\n|Proprietario: %s", nome );
             printf("\n|CPF: %li", cpf);
             printf("\n|Senha: %d", senha );
-            printf("\n|Numero da conta: %d\n", conta);
+            printf("\n|Numero da conta: %d", conta);
+            printf("\n|Saldo inicial = 0\n");
             printf("________________________________________\n" );
 
             FILE *pont_arq;
             pont_arq = fopen("dados.txt", "a");
-            fprintf(pont_arq, "|--------------------------|\n" );
-            fprintf(pont_arq, "Proprietario: %s\n", nome);
-            fprintf(pont_arq, "CPF: %li\n", cpf);
-            fprintf(pont_arq, "Conta: %d\n", conta);
-            fprintf(pont_arq, "Saldo: %d\n", saldo_in);
-            fprintf(pont_arq, "|--------------------------|\n" );
+            fprintf(pont_arq, "|----------------------------------------------------|\n" );
+            fprintf(pont_arq, "\tProprietario: %s\n", nome);
+            fprintf(pont_arq, "\tCPF: %li\n", cpf);
+            fprintf(pont_arq, "\tConta: %d\n", conta);
+            fprintf(pont_arq, "\tSaldo: %d\n", saldo_in);
+            fprintf(pont_arq, "|----------------------------------------------------|\n" );
             fclose(pont_arq);
 
             FILE *pont_senha;
@@ -88,6 +88,8 @@ int main(void){
 
     //Usuario ja cadastrado
     case 2:
+    //Todas as contas quando são logadas tem seu saldo alterado para 0 para melhor
+    //entendimento no programa, porem nos arquivos permanentes tem todos os dados salvos.
             do{
               printf("________________________________________\n" );
               printf("\n***Entre com sua conta bancaria***\n" );
@@ -134,6 +136,9 @@ int main(void){
             system("clear");
 
             do{
+              /*Teria varias maneiras de fazer isso, mas eu fiz assim para evitar
+              alguns bugs e ficar melhor o entendimento*/
+
               //Menu do Usuario
                    printf("\t   ||Logado com o CPF: %s||\n", id);
                    printf("\t   |No dia :%s As:%s|\n",__DATE__,__TIME__);
@@ -146,7 +151,7 @@ int main(void){
                    printf("\t|           [2] Saque                  |\n" );
                    printf("\t|           [3] Deposito               |\n" );
                    printf("\t|           [4] Transferencia          |\n" );
-                   printf("\t|                                      |\n" );
+                   printf("\t|           [5] Sair                   |\n" );
                    printf("\t|______________________________________|\n" );
                    scanf("%d", &opcao);
               //Saldo
@@ -163,12 +168,29 @@ int main(void){
                      printf("Você não tem dinheiro em conta para sacar!! "   );
                      printf("\t\n ______________________________________\n"  );
                    }
-                   else if(saldo_in > 0){
+                   if(opcao == 2 && saldo_in > 0){
+
                    printf("\t\n ______________________________________\n"  );
                    printf("|Digite o valor do saque: ");
                    scanf("%d", &saque);
                    saldo_in = saldo_in - saque;
-                   printf("=|Saque efetuado com sucesso|=\n" );
+                   if (saque <= saldo_in){
+                      printf("=|Saque efetuado com sucesso|=\n" );
+                   }
+                   if (saque > saldo_in){
+                     printf("Você não tem esse saldo para sacar, consulte seu saldo!\n" );
+                   }
+
+
+                   FILE *pont_extrato;
+                   pont_extrato = fopen("extratos.txt", "a");
+                   fprintf(pont_extrato, "|----------------------------------------|\n" );
+                   fprintf(pont_extrato, "|No dia :%s As:%s|\n", __DATE__,__TIME__);
+                   fprintf(pont_extrato, "|O CPF: %s Teve seu saldo alterado\n", id);
+                   fprintf(pont_extrato, "|Novo saldo: %d\n", saldo_in);
+                   fprintf(pont_extrato, "|----------------------------------------|\n" );
+                   fclose(pont_extrato);
+
                    printf("\t\n ______________________________________\n"  );
                  }
               //Deposito
@@ -180,31 +202,62 @@ int main(void){
                      printf("\t=|Depositado com sucesso|=" );
                      printf("\t\n ______________________________________\n"  );
 
+                     FILE *pont_extrato;
+                     pont_extrato = fopen("extratos.txt", "a");
+                     fprintf(pont_extrato, "|----------------------------------------|\n" );
+                     fprintf(pont_extrato, "|No dia :%s As:%s|\n", __DATE__,__TIME__);
+                     fprintf(pont_extrato, "|O CPF: %s Teve seu saldo alterado\n", id);
+                     fprintf(pont_extrato, "|Novo saldo: %d\n", saldo_in);
+                     fprintf(pont_extrato, "|----------------------------------------|\n" );
+                     fclose(pont_extrato);
             //Gravando no arquivo
-
                      }
               //Tranferencia
                    if (opcao == 4){
                      printf("\t\n ______________________________________\n"  );
-                     printf("|Digite a conta destino: ");
+                     printf("\n|Digite o CPF destino: ");
+                     scanf("%li", &cpf_des);
+                     printf("\n|Digite a conta destino: " );
                      scanf("%d", &conta_des);
-                     printf("|Valor da transferência:: ");
+                     printf("\n|Valor da transferência: ");
                      scanf("%d", &valor_trans);
-                     printf("\n\t=|Tranferido com sucesso|=\n" );
-                     printf("\t\n ______________________________________\n"  );
+
+                     if (valor_trans < saldo_in){
+
+                       printf("\n\t=|Tranferido com sucesso|=\n" );
+                       saldo_in = saldo_in - valor_trans;
+
+                       FILE *pont_extrato;
+                       pont_extrato = fopen("extratos.txt", "a");
+                       fprintf(pont_extrato, "|-------------------------------------------------|\n" );
+                       fprintf(pont_extrato, "|No dia :%s As:%s|\n", __DATE__,__TIME__);
+                       fprintf(pont_extrato, "|O CPF: %li e a conta: %d Recebeu um deposito!\n", cpf_des, conta_des);
+                       fprintf(pont_extrato, "|Valor do deposito: %d\n", valor_trans);
+                       fprintf(pont_extrato, "|-------------------------------------------------|\n" );
+                       fclose(pont_extrato);
+
+                       printf("\t\n ______________________________________\n"  );
+                       printf("||=Extrato da tranferencia=||\n" );
+                       printf("\n|CPF Recebido: %li", cpf_des);
+                       printf("\n|Conta recebida: %d", conta_des);
+                       printf("\n|Valor transferido: %d", valor_trans);
+                       printf("\t\n ______________________________________\n"  );
+
+                     }
+                    if (valor_trans > saldo_in){
+                       printf("\t\n ______________________________________\n"  );
+                      printf("=|Saldo insulficiente, consulte seu saldo!!|=\n" );
+                       printf("\t\n ______________________________________\n"  );
+                    }
+
+                   }
+                   if (opcao = 5){
+                     system ("clear");
+                     break;
                    }
 
-                   FILE *pont_extrato;
-                   pont_extrato = fopen("extratos.txt", "a");
-                   fprintf(pont_extrato, "|--------------------------------------|\n" );
-                   fprintf(pont_extrato, "|No dia :%s As:%s|\n", __DATE__,__TIME__);
-                   fprintf(pont_extrato, "|O CPF: %s Teve seu saldo alterado\n", id);
-                   fprintf(pont_extrato, "|Novo saldo: %d\n", saldo_in);
-                   fprintf(pont_extrato, "|--------------------------------------|\n" );
-                   fclose(pont_extrato);
-
               //Voltando ao menu principal
-                   printf("\n=|Digite qualquer numero para voltar ao menu inicial ou '0' para sair|=\n" );
+                   printf("\n=|Deseja fazer outra operação?(Digite qualquer numero) ou '0' para sair|=\n" );
                    scanf("%d", &voltar1);
                    voltar = voltar1;
 
@@ -212,6 +265,9 @@ int main(void){
               //Salvando o novo extrato bancario
 
             }while (voltar > 0);
+          case 3:
+            system ("clear");
+            break;
 
     return 0;
 }
